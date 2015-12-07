@@ -1,0 +1,4 @@
+touch testfile.txt	 - create an empty file name testfile.txt
+echo "Hello world in HDFS" >> testfile.txt	- display the line of text that is being inserted into the newly created testfile
+cat testfile.txt	- read and print out the file
+hdfs dfs -put testfile.txt	- put the file into HDFS
