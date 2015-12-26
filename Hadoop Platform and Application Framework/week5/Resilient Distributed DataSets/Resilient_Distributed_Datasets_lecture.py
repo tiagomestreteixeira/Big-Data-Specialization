@@ -85,3 +85,70 @@ Out[15]:
  (u'time', 1),
  (u'galaxy', 1)]
 
+
+#----- --------#
+# Create RDD
+
+# from local filesystem:
+text_RDD = sc.textFile("file:///home/cloudera/testfile1")
+
+# apply transformation: map
+# map : apply function to each element of RDD
+# lowercase the input
+def lower(line):
+	return line.lower()
+
+lower_text_RDD = text_RDD.map(lower)
+
+
+In [41]: lower_text_RDD.collect()
+Out[41]: [u'a long time in a galaxy far far away']
+
+
+
+# Apply a flatMap transformation
+In [42]: words_RDD = text_RDD.flatMap(split_words)
+
+In [43]: words_RDD.collect()
+Out[43]: [u'A', u'long', u'time', u'in', u'a', u'galaxy', u'far', u'far', u'away']
+
+
+# Filtering transformation
+
+def starts_with_a(word):
+	return word.lower().startswith("a")
+ 
+In [45]: words_RDD.filter(starts_with_a).collect()
+Out[45]: [u'A', u'a', u'away']
+
+
+# Coalesce transformation
+
+
+In [46]: sc.parallelize(range(10), 4).glom().collect()
+Out[46]: [[0, 1], [2, 3], [4, 5], [6, 7, 8, 9]]
+
+
+In [48]: sc.parallelize(range(10), 4).coalesce(2).glom().collect()
+Out[48]: [[0, 1, 2, 3], [4, 5, 6, 7, 8, 9]]
+
+
+###### Wide Transformations
+
+# GroupByKey
+
+In [50]: for k,v in pairs_RDD.groupByKey().collect():
+			 print "Key:", k, "Values:",list(v)
+Out [50]:
+Key: A Values: [1]
+Key: a Values: [1]
+Key: far Values: [1, 1]
+Key: away Values: [1]
+Key: in Values: [1]
+Key: long Values: [1]
+Key: time Values: [1]
+Key: galaxy Values: [1]
+
+
+
+
